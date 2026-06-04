@@ -175,14 +175,15 @@ p {
   font-family: var(--font-heading);
   font-size: var(--text-sm);
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-cream);
   background: transparent;
   border: 1px solid var(--color-sage);
-  padding: 12px 28px;
+  padding: 12px 24px;
   border-radius: var(--radius-md);
   transition: all var(--transition-base);
+  white-space: nowrap;
 }
 
 .btn-primary:hover {
@@ -197,14 +198,15 @@ p {
   font-family: var(--font-heading);
   font-size: var(--text-sm);
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-forest);
   background: var(--color-terracotta);
   border: 1px solid var(--color-terracotta);
-  padding: 12px 28px;
+  padding: 12px 24px;
   border-radius: var(--radius-md);
   transition: all var(--transition-base);
+  white-space: nowrap;
 }
 
 .btn-accent:hover {
