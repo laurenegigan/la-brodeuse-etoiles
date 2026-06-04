@@ -18,6 +18,37 @@ function Home() {
           </div>
         </div>
       </section>
+
+      {/* CATÉGORIES */}
+<section className="categories">
+  <div className="container">
+    <p className="section-label">Explorez les royaumes</p>
+    <div className="ornament"><span>✦</span></div>
+    <div className="categories__grid">
+      <a href="/catalogue?categorie=illustrations" className="categories__item">
+        <div className="categories__arch">
+          <img src="/cat-illustrations.jpg" alt="Illustrations" />
+          <div className="categories__overlay" />
+        </div>
+        <h3>Illustrations</h3>
+      </a>
+      <a href="/catalogue?categorie=papeterie" className="categories__item">
+        <div className="categories__arch">
+          <img src="/cat-papeterie.jpg" alt="Papeterie" />
+          <div className="categories__overlay" />
+        </div>
+        <h3>Papeterie</h3>
+      </a>
+      <a href="/catalogue?categorie=stickers" className="categories__item">
+        <div className="categories__arch">
+          <img src="/cat-stickers.jpg" alt="Stickers" />
+          <div className="categories__overlay" />
+        </div>
+        <h3>Stickers</h3>
+      </a>
+    </div>
+  </div>
+</section>
     </div>
   )
 }
