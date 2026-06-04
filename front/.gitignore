@@ -1,14 +1,3 @@
-# Dependencies
-front/node_modules/
-back/node_modules/
-
-# Build
-front/dist/
-
-# Environnement
-back/.env
+node_modules/
+dist/
 .env
-
-# OS
-.DS_Store
-Thumbs.db
