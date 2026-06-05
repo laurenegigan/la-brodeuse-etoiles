@@ -164,7 +164,7 @@ p {
    ============================================ */
 
 .container {
-  max-width: var(--max-width);
+  max-width: 100%;
   margin: 0 auto;
   padding: 0 var(--space-xl);
 }
