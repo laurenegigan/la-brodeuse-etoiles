@@ -115,6 +115,35 @@ function Home() {
         </div>
       </section>
 
+     {/* 3 COLONNES */}
+      <section className="features">
+        <div className="features__grid">
+          <div className="features__item">
+            <div className="features__icon">
+              <img src="/icon-1.jpg" alt="Tissé à la main" />
+            </div>
+            <div className="features__divider" />
+            <h4>Tissé à la main</h4>
+            <p>Chaque création naît de mes mains, dessinée et façonnée avec soin et intention.</p>
+          </div>
+          <div className="features__item">
+            <div className="features__icon">
+              <img src="/icon-2.jpg" alt="Envoyé avec soin" />
+            </div>
+            <div className="features__divider" />
+            <h4>Envoyé avec soin</h4>
+            <p>Vos commandes sont préparées et expédiées sous 48h, emballées avec tendresse.</p>
+          </div>
+          <div className="features__item">
+            <div className="features__icon">
+              <img src="/icon-3.jpg" alt="Imprégné de magie" />
+            </div>
+            <div className="features__divider" />
+            <h4>Imprégné de magie</h4>
+            <p>Un univers fantastique brodé dans chaque illustration, pour les âmes qui rêvent.</p>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }
