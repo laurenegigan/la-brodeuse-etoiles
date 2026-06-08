@@ -1,0 +1,57 @@
+/* ============================================
+   PAGES LÉGALES
+   ============================================ */
+
+.legale {
+  padding-top: var(--nav-height);
+}
+
+.legale__hero {
+  padding: var(--space-3xl) 0;
+  background: var(--color-forest-mid);
+  border-bottom: 1px solid var(--color-forest-light);
+  text-align: center;
+}
+
+.legale__content {
+  padding: var(--space-3xl) 0;
+  background: var(--color-forest);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.legale__content h2 {
+  font-size: var(--text-xl);
+  margin-bottom: var(--space-md);
+  margin-top: var(--space-2xl);
+  color: var(--color-terracotta);
+}
+
+.legale__content h2:first-child {
+  margin-top: 0;
+}
+
+.legale__content p {
+  font-size: var(--text-base);
+  line-height: 1.9;
+  margin-bottom: var(--space-md);
+}
+
+.legale__content ul {
+  list-style: disc;
+  padding-left: var(--space-xl);
+  margin-bottom: var(--space-md);
+}
+
+.legale__content ul li {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--color-cream-dim);
+  line-height: 1.9;
+  margin-bottom: var(--space-sm);
+}
+
+.legale__content a {
+  color: var(--color-terracotta);
+  text-decoration: underline;
+}

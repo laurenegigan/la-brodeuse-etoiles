@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
+import ScrollToTop from './components/ScrollToTop'
 import Home from './pages/Home'
 import Catalog from './pages/Catalog'
 import Product from './pages/Product'
@@ -21,20 +22,21 @@ import CGV from './pages/CGV'
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Navbar />
       <main>
         <Routes>
-          <Route path="/"          element={<Home />} />
+          <Route path="/" element={<Home />} />
           <Route path="/catalogue" element={<Catalog />} />
           <Route path="/produit/:id" element={<Product />} />
           <Route path="/mail-club" element={<MailClub />} />
-          <Route path="/a-propos"  element={<About />} />
-          <Route path="/contact"   element={<Contact />} />
+          <Route path="/a-propos" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/connexion" element={<Login />} />
           <Route path="/inscription" element={<Signup />} />
           <Route path="/mon-espace" element={<Profile />} />
-          <Route path="/admin"     element={<Admin />} />
-          <Route path="/paiement"  element={<Payment />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/paiement" element={<Payment />} />
           <Route path="/confidentialite" element={<Confidentialite />} />
           <Route path="/expedition" element={<Expedition />} />
           <Route path="/cookies" element={<Cookies />} />
