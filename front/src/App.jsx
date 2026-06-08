@@ -12,6 +12,11 @@ import Signup from './pages/Signup'
 import Profile from './pages/Profile'
 import Admin from './pages/Admin'
 import Payment from './pages/Payment'
+import Confidentialite from './pages/Confidentialite'
+import Expedition from './pages/Expedition'
+import Cookies from './pages/Cookies'
+import Remboursement from './pages/Remboursement'
+import CGV from './pages/CGV'
 
 function App() {
   return (
@@ -30,6 +35,11 @@ function App() {
           <Route path="/mon-espace" element={<Profile />} />
           <Route path="/admin"     element={<Admin />} />
           <Route path="/paiement"  element={<Payment />} />
+          <Route path="/confidentialite" element={<Confidentialite />} />
+          <Route path="/expedition" element={<Expedition />} />
+          <Route path="/cookies" element={<Cookies />} />
+          <Route path="/remboursement" element={<Remboursement />} />
+          <Route path="/cgv" element={<CGV />} />
         </Routes>
       </main>
       <Footer />
