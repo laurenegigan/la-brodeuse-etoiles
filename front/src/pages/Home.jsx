@@ -144,6 +144,56 @@ function Home() {
           </div>
         </div>
       </section>
+
+      {/* LES MURMURES */}
+      <section className="murmures">
+        <div className="container">
+          <p className="section-label">Les Murmures</p>
+          <div className="ornament"><span>✦</span></div>
+          <div className="murmures__grid">
+            {[
+              {
+                id: 1,
+                note: 5,
+                texte: "Un vrai coup de cœur. Le sticker est encore plus beau en vrai, les détails sont incroyables. On sent vraiment l'univers fantastique dans chaque trait.",
+                nom: "Mathilde R.",
+                produit: 'Sticker "Forêt enchantée"'
+              },
+              {
+                id: 2,
+                note: 5,
+                texte: "Le carnet est absolument magnifique, la couverture illustrée est une œuvre à elle seule. L'emballage soigné m'a touchée, on voit vraiment l'amour du travail bien fait.",
+                nom: "Léa V.",
+                produit: 'Carnet "Lune de minuit"'
+              },
+              {
+                id: 3,
+                note: 5,
+                texte: "Abonnée au mail club depuis 3 mois et à chaque envoi c'est la même magie. Des créations uniques qu'on ne trouve nulle part ailleurs. Je recommande les yeux fermés !",
+                nom: "Sophie D.",
+                produit: "Abonnement Mail Club"
+              },
+            ].map((avis) => (
+              <div key={avis.id} className="murmure-card">
+                <div className="murmure-card__stars">
+                  {'★'.repeat(avis.note)}
+                </div>
+                <p className="murmure-card__texte">"{avis.texte}"</p>
+                <div className="murmure-card__divider" />
+                <div className="murmure-card__author">
+                  <div className="murmure-card__avatar">
+                    {avis.nom.charAt(0)}
+                  </div>
+                  <div className="murmure-card__info">
+                    <span className="murmure-card__nom">{avis.nom}</span>
+                    <span className="murmure-card__produit">{avis.produit}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   )
 }
