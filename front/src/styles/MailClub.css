@@ -1,0 +1,226 @@
+/* ============================================
+   MAIL CLUB PAGE
+   ============================================ */
+
+.mailclub-page {
+  padding-top: var(--nav-height);
+}
+
+/* Hero */
+.mailclub-page__hero {
+  padding: var(--space-3xl) 0;
+  background: var(--color-forest-mid);
+  border-bottom: 1px solid var(--color-forest-light);
+  text-align: center;
+}
+
+.mailclub-page__sub {
+  font-family: var(--font-heading);
+  font-size: var(--text-md);
+  color: var(--color-terracotta);
+  letter-spacing: 0.1em;
+  margin-top: var(--space-md);
+}
+
+/* Description */
+.mailclub-page__desc {
+  padding: var(--space-3xl) 0;
+  background: var(--color-forest);
+}
+
+.mailclub-page__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3xl);
+  align-items: center;
+}
+
+.mailclub-page__image {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--color-forest-light);
+}
+
+.mailclub-page__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mailclub-page__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.mailclub-page__content h2 {
+  font-size: var(--text-2xl);
+}
+
+.mailclub-page__content h3 {
+  font-size: var(--text-lg);
+  color: var(--color-terracotta);
+  margin-top: var(--space-sm);
+}
+
+.mailclub-page__content p {
+  font-style: italic;
+  line-height: 1.9;
+}
+
+.mailclub-page__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.mailclub-page__list li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--color-cream-dim);
+}
+
+.mailclub-page__list li span {
+  color: var(--color-terracotta);
+  font-size: var(--text-xs);
+}
+
+/* Modalités */
+.mailclub-page__modalites {
+  padding: var(--space-3xl) 0;
+  background: var(--color-cream);
+  text-align: center;
+}
+
+.mailclub-page__modalites-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-xl);
+  margin-top: var(--space-xl);
+  text-align: left;
+}
+
+.mailclub-page__modalite {
+  padding: var(--space-xl);
+  border: none;
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  background: var(--color-forest-light);
+}
+
+.mailclub-page__modalites .section-label {
+  color: var(--color-forest-light);
+}
+
+.mailclub-page__modalite h4 {
+  color: var(--color-terracotta);
+  font-size: var(--text-md);
+}
+
+.mailclub-page__modalite p {
+  font-style: italic;
+  font-size: var(--text-sm);
+}
+
+/* Inscription */
+.mailclub-page__inscription {
+  padding: var(--space-3xl) 0;
+  background: var(--color-forest);
+}
+
+.mailclub-page__form-wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.mailclub-page__form-wrapper h2 {
+  font-size: var(--text-2xl);
+}
+
+.mailclub-page__form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  margin-top: var(--space-md);
+}
+
+.mailclub-page__fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+
+.mailclub-page__form .contact__field input {
+  background: var(--color-forest-mid);
+  border: 1px solid var(--color-forest-light);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  color: var(--color-cream);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  width: 100%;
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.mailclub-page__form .contact__field input:focus {
+  border-color: var(--color-sage);
+}
+
+.mailclub-page__form .contact__field label {
+  text-align: left;
+}
+
+.mailclub-page__legal {
+  font-size: var(--text-xs);
+  color: var(--color-cream-dim);
+  opacity: 0.6;
+  font-style: italic;
+}
+
+.mailclub-page__legal a {
+  color: var(--color-terracotta);
+  text-decoration: underline;
+}
+
+/* Succès */
+.mailclub-page__success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-lg);
+  text-align: center;
+  padding: var(--space-2xl) 0;
+}
+
+.mailclub-page__success p:first-child {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  color: var(--color-terracotta);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .mailclub-page__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mailclub-page__modalites-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mailclub-page__fields {
+    grid-template-columns: 1fr;
+  }
+}
