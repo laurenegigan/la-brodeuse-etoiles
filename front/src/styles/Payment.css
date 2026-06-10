@@ -1,0 +1,243 @@
+/* ============================================
+   PAIEMENT
+   ============================================ */
+
+.payment {
+  padding-top: var(--nav-height);
+}
+
+/* Hero */
+.payment__hero {
+  padding: var(--space-2xl) 0;
+  background: var(--color-cream);
+  border-bottom: none;
+  text-align: center;
+}
+
+.payment__hero h1 {
+  color: var(--color-forest);
+}
+
+.payment__hero .ornament::before,
+.payment__hero .ornament::after {
+  background: var(--color-forest);
+}
+
+/* Section */
+.payment__section {
+  padding: var(--space-3xl) 0;
+  background: var(--color-cream);
+}
+
+.payment__grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: var(--space-3xl);
+  align-items: start;
+}
+
+/* Formulaire */
+.payment__form-wrapper {
+  background: var(--color-forest-mid);
+  border: 1px solid var(--color-forest-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.payment__form-wrapper h3 {
+  font-size: var(--text-xl);
+  color: var(--color-terracotta);
+}
+
+.payment__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.payment__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+
+.payment__form .auth__field input,
+.payment__form .auth__field select {
+  background: var(--color-forest);
+  border: 1px solid var(--color-forest-light);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  color: var(--color-cream);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  outline: none;
+  width: 100%;
+  transition: border-color var(--transition-fast);
+}
+
+.payment__form .auth__field input:focus,
+.payment__form .auth__field select:focus {
+  border-color: var(--color-sage);
+}
+
+.payment__form .auth__field input::placeholder {
+  color: var(--color-cream-dim);
+  opacity: 0.5;
+}
+
+.payment__form .auth__field label {
+  font-family: var(--font-heading);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-sage);
+}
+
+.payment__btn {
+  width: 100%;
+  text-align: center;
+  margin-top: var(--space-sm);
+}
+
+.payment__legal {
+  font-size: var(--text-xs);
+  color: var(--color-cream-dim);
+  opacity: 0.6;
+  font-style: italic;
+  text-align: center;
+}
+
+.payment__legal a {
+  color: var(--color-terracotta);
+  text-decoration: underline;
+}
+
+/* Récapitulatif */
+.payment__recap {
+  background: var(--color-forest-mid);
+  border: 1px solid var(--color-forest-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  position: sticky;
+  top: calc(var(--nav-height) + var(--space-xl));
+}
+
+.payment__recap h3 {
+  font-size: var(--text-xl);
+  color: var(--color-terracotta);
+}
+
+.payment__items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.payment__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.payment__item-img {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid var(--color-forest-light);
+}
+
+.payment__item-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.payment__item-qty {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-terracotta);
+  color: var(--color-cream);
+  font-family: var(--font-heading);
+  font-size: var(--text-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.payment__item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.payment__item-name {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  color: var(--color-cream);
+  font-weight: 600;
+}
+
+.payment__item-price {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-terracotta);
+}
+
+.payment__divider {
+  width: 100%;
+  height: 1px;
+  background: var(--color-forest-light);
+}
+
+.payment__totals {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.payment__total-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-cream-dim);
+}
+
+.payment__total-line--final {
+  font-family: var(--font-heading);
+  font-size: var(--text-md);
+  font-weight: 600;
+  color: var(--color-cream);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .payment__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .payment__recap {
+    position: static;
+    order: -1;
+  }
+
+  .payment__row {
+    grid-template-columns: 1fr;
+  }
+}
