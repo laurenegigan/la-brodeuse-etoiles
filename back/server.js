@@ -6,6 +6,7 @@ import productRoutes from './routes/productRoutes.js'
 import categoryRoutes from './routes/categoryRoutes.js'
 import authRoutes from './routes/authRoutes.js'
 import mailclubRoutes from './routes/mailclubRoutes.js'
+import orderRoutes from './routes/orderRoutes.js'
 
 dotenv.config()
 
@@ -28,6 +29,8 @@ app.use('/produits', productRoutes)
 app.use('/auth', authRoutes)
 
 app.use('/mailclub', mailclubRoutes)
+
+app.use('/commandes', orderRoutes)
 
 app.listen(PORT, () => {
   console.log(`✦ Serveur lancé sur http://localhost:${PORT}`)
