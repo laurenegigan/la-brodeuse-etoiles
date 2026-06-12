@@ -7,6 +7,8 @@ import categoryRoutes from './routes/categoryRoutes.js'
 import authRoutes from './routes/authRoutes.js'
 import mailclubRoutes from './routes/mailclubRoutes.js'
 import orderRoutes from './routes/orderRoutes.js'
+import { connectMongo } from './config/mongo.js'
+import avisRoutes from './routes/avisRoutes.js'
 
 dotenv.config()
 
@@ -32,6 +34,11 @@ app.use('/mailclub', mailclubRoutes)
 
 app.use('/commandes', orderRoutes)
 
+app.use('/', avisRoutes)
+
+connectMongo()
+
 app.listen(PORT, () => {
   console.log(`✦ Serveur lancé sur http://localhost:${PORT}`)
 })
+
