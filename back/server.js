@@ -4,6 +4,7 @@ import helmet from 'helmet'
 import dotenv from 'dotenv'
 import productRoutes from './routes/productRoutes.js'
 import categoryRoutes from './routes/categoryRoutes.js'
+import authRoutes from './routes/authRoutes.js'
 
 dotenv.config()
 
@@ -23,7 +24,7 @@ app.get('/', (req, res) => {
 
 app.use('/produits', productRoutes)
 
-app.use('/categories', categoryRoutes)
+app.use('/auth', authRoutes)
 
 app.listen(PORT, () => {
   console.log(`✦ Serveur lancé sur http://localhost:${PORT}`)
