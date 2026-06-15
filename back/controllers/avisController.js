@@ -1,4 +1,5 @@
 import AvisProduit from '../models/AvisProduit.js'
+import { containsForbiddenWords } from '../utils/moderation.js'
 
 // GET /produits/:id/avis - Liste des avis d'un produit
 export async function getAvisByProduct(req, res) {
@@ -26,6 +27,10 @@ export async function createAvis(req, res) {
 
     if (note < 1 || note > 5) {
       return res.status(400).json({ error: 'La note doit être comprise entre 1 et 5' })
+    }
+
+    if (containsForbiddenWords(titre) || containsForbiddenWords(contenu)) {
+      return res.status(400).json({ error: 'Votre avis contient des termes non autorisés' })
     }
 
     // Vérifier qu'il n'y a pas déjà un avis de cet utilisateur sur ce produit

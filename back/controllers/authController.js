@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { createUser, findUserByEmail } from '../models/userModel.js'
+import { containsForbiddenWords } from '../utils/moderation.js'
 
 export async function register(req, res) {
   try {
@@ -13,6 +14,10 @@ export async function register(req, res) {
 
     if (motdepasse.length < 6) {
       return res.status(400).json({ error: 'Le mot de passe doit contenir au moins 6 caractères' })
+    }
+
+    if (containsForbiddenWords(prenom)) {
+      return res.status(400).json({ error: 'Le prénom choisi n\'est pas autorisé' })
     }
 
     // Vérifier si l'email existe déjà
