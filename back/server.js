@@ -11,6 +11,8 @@ import { connectMongo } from './config/mongo.js'
 import avisRoutes from './routes/avisRoutes.js'
 import contactRoutes from './routes/contactRoutes.js'
 import adminRoutes from './routes/adminRoutes.js'
+import session from 'express-session'
+import passport from './config/passport.js'
 
 dotenv.config()
 
@@ -21,6 +23,13 @@ const PORT = process.env.PORT || 3001
 app.use(helmet())
 app.use(cors())
 app.use(express.json())
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+}))
+app.use(passport.initialize())
+app.use(passport.session())
 
 
 // Route de test
