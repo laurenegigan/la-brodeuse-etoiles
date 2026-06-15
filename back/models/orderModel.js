@@ -51,3 +51,25 @@ export async function getProductStock(produitId) {
 export async function decrementStock(produitId, quantite) {
   await pool.query('UPDATE produits SET stock = stock - ? WHERE id = ?', [quantite, produitId])
 }
+
+// Toutes les commandes (admin)
+export async function getAllOrders() {
+  const [commandes] = await pool.query(`
+    SELECT c.*, u.prenom, u.email
+    FROM commandes c
+    JOIN utilisateurs u ON c.utilisateur_id = u.id
+    ORDER BY c.date_commande DESC
+  `)
+
+  for (const commande of commandes) {
+    const [produits] = await pool.query(`
+      SELECT cp.quantite, cp.prix_unitaire, p.nom
+      FROM commande_produits cp
+      JOIN produits p ON cp.produit_id = p.id
+      WHERE cp.commande_id = ?
+    `, [commande.id])
+    commande.produits = produits
+  }
+
+  return commandes
+}

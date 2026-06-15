@@ -10,6 +10,7 @@ import orderRoutes from './routes/orderRoutes.js'
 import { connectMongo } from './config/mongo.js'
 import avisRoutes from './routes/avisRoutes.js'
 import contactRoutes from './routes/contactRoutes.js'
+import adminRoutes from './routes/adminRoutes.js'
 
 dotenv.config()
 
@@ -38,6 +39,8 @@ app.use('/commandes', orderRoutes)
 app.use('/', avisRoutes)
 
 app.use('/contact', contactRoutes)
+
+app.use('/admin', adminRoutes)
 
 connectMongo()
 

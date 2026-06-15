@@ -33,3 +33,25 @@ export async function getProductsByCategory(categorieNom) {
   `, [categorieNom])
   return rows
 }
+
+// Créer un produit (admin)
+export async function createProduct(nom, description, prix, image_url, stock, categorie_id) {
+  const [result] = await pool.query(
+    'INSERT INTO produits (nom, description, prix, image_url, stock, categorie_id) VALUES (?, ?, ?, ?, ?, ?)',
+    [nom, description, prix, image_url, stock, categorie_id]
+  )
+  return result.insertId
+}
+
+// Modifier un produit (admin)
+export async function updateProduct(id, nom, description, prix, image_url, stock, categorie_id) {
+  await pool.query(
+    'UPDATE produits SET nom = ?, description = ?, prix = ?, image_url = ?, stock = ?, categorie_id = ? WHERE id = ?',
+    [nom, description, prix, image_url, stock, categorie_id, id]
+  )
+}
+
+// Supprimer un produit (admin)
+export async function deleteProduct(id) {
+  await pool.query('DELETE FROM produits WHERE id = ?', [id])
+}

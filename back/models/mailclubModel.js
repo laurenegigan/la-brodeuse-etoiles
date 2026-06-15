@@ -49,3 +49,24 @@ export async function createDesabonnement(mailclubId, raison, commentaire) {
     [mailclubId, raison, commentaire || null]
   )
 }
+
+// Tous les abonnés avec raison de désabonnement (admin)
+export async function getAllSubscribers() {
+  const [rows] = await pool.query(`
+    SELECT m.*, d.raison, d.commentaire AS commentaire_desabo
+    FROM mailclub_inscrits m
+    LEFT JOIN desabonnements d ON d.mailclub_id = m.id
+    ORDER BY m.date_inscription DESC
+  `)
+  return rows
+}
+
+// Statistiques des raisons de désabonnement
+export async function getDesabonnementStats() {
+  const [rows] = await pool.query(`
+    SELECT raison, COUNT(*) AS count
+    FROM desabonnements
+    GROUP BY raison
+  `)
+  return rows
+}
