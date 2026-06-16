@@ -1,25 +1,33 @@
 import '../styles/Catalog.css'
-import { useState } from 'react'
-
-const PRODUITS = [
-  { id: 1, img: 'product-1.jpg', cat: 'Illustration', name: 'La Forêt des Songes', price: '14,00 €' },
-  { id: 2, img: 'product-2.jpg', cat: 'Papeterie', name: 'Carnet "Lune de Minuit"', price: '9,00 €' },
-  { id: 3, img: 'product-3.jpg', cat: 'Sticker', name: 'Pack "Créatures des Bois"', price: '6,00 €' },
-  { id: 4, img: 'product-4.jpg', cat: 'Illustration', name: 'Le Royaume Oublié', price: '14,00 €' },
-  { id: 5, img: 'product-1.jpg', cat: 'Sticker', name: 'Pack "Étoiles Filantes"', price: '6,00 €' },
-  { id: 6, img: 'product-2.jpg', cat: 'Papeterie', name: 'Marque-pages "Grimoire"', price: '4,00 €' },
-  { id: 7, img: 'product-3.jpg', cat: 'Illustration', name: 'La Dragonnière', price: '14,00 €' },
-  { id: 8, img: 'product-4.jpg', cat: 'Sticker', name: 'Pack "Créatures Célestes"', price: '6,00 €' },
-]
+import { useState, useEffect } from 'react'
+import api from '../api/axios'
 
 const CATEGORIES = ['Tous', 'Illustration', 'Papeterie', 'Sticker']
 
 function Catalog() {
   const [activecat, setActivecat] = useState('Tous')
+  const [produits, setProduits] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  const produitsFiltres = activecat === 'Tous'
-    ? PRODUITS
-    : PRODUITS.filter(p => p.cat === activecat)
+  useEffect(() => {
+    const fetchProduits = async () => {
+      try {
+        setLoading(true)
+        const url = activecat === 'Tous' ? '/produits' : `/produits?categorie=${activecat}`
+        const response = await api.get(url)
+        setProduits(response.data)
+        setError(null)
+      } catch (err) {
+        console.error(err)
+        setError('Impossible de charger les produits')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProduits()
+  }, [activecat])
 
   return (
     <div className="catalog">
@@ -50,22 +58,28 @@ function Catalog() {
             ))}
           </div>
 
+          {/* États de chargement / erreur */}
+          {loading && <p style={{ textAlign: 'center', color: 'var(--color-cream-dim)' }}>Chargement des trésors...</p>}
+          {error && <p style={{ textAlign: 'center', color: 'var(--color-terracotta)' }}>{error}</p>}
+
           {/* Grille */}
-          <div className="catalog__grid">
-            {produitsFiltres.map(item => (
-              <a href={`/produit/${item.id}`} key={item.id} className="product-card">
-                <div className="product-card__image">
-                  <img src={`/${item.img}`} alt={item.name} />
-                  <div className="product-card__overlay" />
-                </div>
-                <div className="product-card__info">
-                  <p className="product-card__category">{item.cat}</p>
-                  <h4 className="product-card__name">{item.name}</h4>
-                  <p className="product-card__price">{item.price}</p>
-                </div>
-              </a>
-            ))}
-          </div>
+          {!loading && !error && (
+            <div className="catalog__grid">
+              {produits.map(item => (
+                <a href={`/produit/${item.id}`} key={item.id} className="product-card">
+                  <div className="product-card__image">
+                    <img src={`/${item.image_url}`} alt={item.nom} />
+                    <div className="product-card__overlay" />
+                  </div>
+                  <div className="product-card__info">
+                    <p className="product-card__category">{item.categorie_nom}</p>
+                    <h4 className="product-card__name">{item.nom}</h4>
+                    <p className="product-card__price">{parseFloat(item.prix).toFixed(2)} €</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          )}
 
         </div>
       </section>
