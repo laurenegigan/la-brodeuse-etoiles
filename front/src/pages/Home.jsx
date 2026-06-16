@@ -1,6 +1,23 @@
 import '../styles/Home.css'
+import { useState, useEffect } from 'react'
+import api from '../api/axios'
 
 function Home() {
+
+  const [produits, setProduits] = useState([])
+
+useEffect(() => {
+  const fetchProduits = async () => {
+    try {
+      const response = await api.get('/produits')
+      setProduits(response.data.slice(0, 4)) // Les 4 premiers produits
+    } catch (err) {
+      console.error(err)
+    }
+  }
+  fetchProduits()
+}, [])
+
   return (
     <div className="home">
 
@@ -90,24 +107,19 @@ function Home() {
         </div>
         <div className="collection__inner">
           <div className="collection__grid">
-            {[
-            { id: 1, img: 'product-1.jpg', cat: 'Illustration', name: 'La Forêt des Songes', price: '14,00 €' },
-            { id: 2, img: 'product-2.jpg', cat: 'Papeterie', name: 'Carnet "Lune de Minuit"', price: '9,00 €' },
-            { id: 3, img: 'product-3.jpg', cat: 'Sticker', name: 'Pack "Créatures des Bois"', price: '6,00 €' },
-            { id: 4, img: 'product-4.jpg', cat: 'Illustration', name: 'Le Royaume Oublié', price: '14,00 €' },
-          ].map((item) => (
+          {produits.map((item) => (
             <a href={`/produit/${item.id}`} key={item.id} className="product-card">
               <div className="product-card__image">
-                <img src={`/${item.img}`} alt={item.name} />
+                <img src={`/${item.image_url}`} alt={item.nom} />
                 <div className="product-card__overlay" />
               </div>
               <div className="product-card__info">
-                <p className="product-card__category">{item.cat}</p>
-                <h4 className="product-card__name">{item.name}</h4>
-                <p className="product-card__price">{item.price}</p>
+                <p className="product-card__category">{item.categorie_nom}</p>
+                <h4 className="product-card__name">{item.nom}</h4>
+                <p className="product-card__price">{parseFloat(item.prix).toFixed(2)} €</p>
               </div>
             </a>
-            ))}
+          ))}
           </div>
           <div className="collection__cta">
             <a href="/catalogue" className="btn-primary">Voir toute la collection</a>
