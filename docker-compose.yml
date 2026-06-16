@@ -1,0 +1,41 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: brodeuse_db
+    restart: unless-stopped
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+    ports:
+      - "3309:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./back/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./back/database/my.cnf:/etc/mysql/conf.d/my.cnf
+
+  backend:
+    build: ./back
+    container_name: brodeuse_backend
+    restart: unless-stopped
+    env_file:
+      - ./back/.env
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+    ports:
+      - "3001:3001"
+    depends_on:
+      - db
+
+  frontend:
+    build: ./front
+    container_name: brodeuse_frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  db_data:

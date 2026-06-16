@@ -31,6 +31,10 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 
+app.use((req, res, next) => {
+  res.setHeader('Content-Type', 'application/json; charset=utf-8')
+  next()
+})
 
 // Route de test
 app.get('/', (req, res) => {
@@ -38,17 +42,11 @@ app.get('/', (req, res) => {
 })
 
 app.use('/produits', productRoutes)
-
 app.use('/auth', authRoutes)
-
 app.use('/mailclub', mailclubRoutes)
-
 app.use('/commandes', orderRoutes)
-
 app.use('/', avisRoutes)
-
 app.use('/contact', contactRoutes)
-
 app.use('/admin', adminRoutes)
 
 connectMongo()
@@ -56,4 +54,3 @@ connectMongo()
 app.listen(PORT, () => {
   console.log(`✦ Serveur lancé sur http://localhost:${PORT}`)
 })
-
