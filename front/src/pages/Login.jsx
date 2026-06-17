@@ -20,7 +20,12 @@ function Login() {
     try {
       const response = await api.post('/auth/login', form)
       login(response.data.token, response.data.user)
-      navigate('/mon-espace')
+
+      if (response.data.user.role === 'admin') {
+        navigate('/admin')
+      } else {
+        navigate('/mon-espace')
+      }
     } catch (err) {
       setError(err.response?.data?.error || 'Une erreur est survenue')
     }
