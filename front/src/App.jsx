@@ -18,34 +18,37 @@ import Expedition from './pages/Expedition'
 import Cookies from './pages/Cookies'
 import Remboursement from './pages/Remboursement'
 import CGV from './pages/CGV'
+import { AuthProvider } from './context/AuthContext'
 
 function App() {
   return (
-    <BrowserRouter>
-      <ScrollToTop />
-      <Navbar />
-      <main>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/catalogue" element={<Catalog />} />
-          <Route path="/produit/:id" element={<Product />} />
-          <Route path="/mail-club" element={<MailClub />} />
-          <Route path="/a-propos" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/connexion" element={<Login />} />
-          <Route path="/inscription" element={<Signup />} />
-          <Route path="/mon-espace" element={<Profile />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/paiement" element={<Payment />} />
-          <Route path="/confidentialite" element={<Confidentialite />} />
-          <Route path="/expedition" element={<Expedition />} />
-          <Route path="/cookies" element={<Cookies />} />
-          <Route path="/remboursement" element={<Remboursement />} />
-          <Route path="/cgv" element={<CGV />} />
-        </Routes>
-      </main>
-      <Footer />
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <ScrollToTop />
+        <Navbar />
+        <main>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/catalogue" element={<Catalog />} />
+            <Route path="/produit/:id" element={<Product />} />
+            <Route path="/mail-club" element={<MailClub />} />
+            <Route path="/a-propos" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/connexion" element={<Login />} />
+            <Route path="/inscription" element={<Signup />} />
+            <Route path="/mon-espace" element={<Profile />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/paiement" element={<Payment />} />
+            <Route path="/confidentialite" element={<Confidentialite />} />
+            <Route path="/expedition" element={<Expedition />} />
+            <Route path="/cookies" element={<Cookies />} />
+            <Route path="/remboursement" element={<Remboursement />} />
+            <Route path="/cgv" element={<CGV />} />
+          </Routes>
+        </main>
+        <Footer />
+      </BrowserRouter>
+    </AuthProvider>
   )
 }
 
