@@ -1,10 +1,18 @@
 import { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
-import { ShoppingBag, User, Menu, X } from 'lucide-react'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { ShoppingBag, User, Menu, X, LogOut } from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
 import './Navbar.css'
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/')
+  }
 
   return (
     <header className="navbar">
@@ -26,13 +34,30 @@ function Navbar() {
           <NavLink to="/mail-club" className={({ isActive }) => isActive ? 'navbar__link navbar__link--active' : 'navbar__link'}>
             Mail Club
           </NavLink>
+          {user?.role === 'admin' && (
+            <NavLink to="/admin" className={({ isActive }) => isActive ? 'navbar__link navbar__link--active' : 'navbar__link'}>
+              Admin
+            </NavLink>
+          )}
         </nav>
 
         {/* Icônes droite */}
         <div className="navbar__actions">
-          <Link to="/connexion" className="navbar__icon" aria-label="Mon compte">
-            <User size={20} />
-          </Link>
+          {user ? (
+            <>
+              <Link to="/mon-espace" className="navbar__user" aria-label="Mon espace">
+                <User size={18} />
+                <span>{user.prenom}</span>
+              </Link>
+              <button onClick={handleLogout} className="navbar__icon" aria-label="Se déconnecter">
+                <LogOut size={20} />
+              </button>
+            </>
+          ) : (
+            <Link to="/connexion" className="navbar__icon" aria-label="Mon compte">
+              <User size={20} />
+            </Link>
+          )}
           <Link to="/panier" className="navbar__icon" aria-label="Panier">
             <ShoppingBag size={20} />
           </Link>
