@@ -1,35 +1,62 @@
 import '../styles/Product.css'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-
-const PRODUITS = [
-  { id: 1, img: 'product-1.jpg', cat: 'Illustration', name: 'La Forêt des Songes', price: '14,00 €', description: 'Une illustration fantastique représentant une forêt enchantée baignée de lumière dorée. Imprimée sur papier mat 300g, format A4.', details: ['Format A4 (21x29,7cm)', 'Impression sur papier mat 300g', 'Expédition sous 48h', 'Emballage soigné'] },
-  { id: 2, img: 'product-2.jpg', cat: 'Papeterie', name: 'Carnet "Lune de Minuit"', price: '9,00 €', description: 'Un carnet à couverture illustrée inspiré des nuits fantastiques. Pages blanches, idéal pour vos notes, croquis et pensées magiques.', details: ['A5 (148x210mm)', '100 pages blanches', 'Couverture rigide illustrée', 'Expédition sous 48h'] },
-  { id: 3, img: 'product-3.jpg', cat: 'Sticker', name: 'Pack "Créatures des Bois"', price: '6,00 €', description: 'Un pack de 5 stickers illustrés représentant les créatures fantastiques des forêts enchantées. Vinyle waterproof, finition mate.', details: ['5 stickers par pack', 'Vinyle waterproof', 'Finition mate', 'Diamètre 5-8cm'] },
-  { id: 4, img: 'product-4.jpg', cat: 'Illustration', name: 'Le Royaume Oublié', price: '14,00 €', description: 'Une illustration épique d\'un royaume fantastique perdu dans les brumes du temps. Imprimée sur papier mat 300g, format A4.', details: ['Format A4 (21x29,7cm)', 'Impression sur papier mat 300g', 'Expédition sous 48h', 'Emballage soigné'] },
-]
-
-const AVIS = [
-  { id: 1, note: 5, titre: 'Absolument magnifique', texte: 'La qualité d\'impression est incroyable, les couleurs sont vibrantes. Je suis ravie de mon achat !', nom: 'Mathilde R.', date: 'Mars 2025' },
-  { id: 2, note: 5, titre: 'Parfait, je recommande', texte: 'Emballage soigné, livraison rapide. Le produit est encore plus beau en vrai qu\'en photo.', nom: 'Léa V.', date: 'Février 2025' },
-  { id: 3, note: 4, titre: 'Très belle illustration', texte: 'Très contente de mon achat, l\'illustration est magnifique. Petite déception sur le délai mais le résultat en vaut la peine.', nom: 'Sophie D.', date: 'Janvier 2025' },
-]
+import api from '../api/axios'
 
 function Product() {
   const { id } = useParams()
-  const produit = PRODUITS.find(p => p.id === parseInt(id)) || PRODUITS[0]
+  const [produit, setProduit] = useState(null)
+  const [avis, setAvis] = useState([])
+  const [loading, setLoading] = useState(true)
   const [quantite, setQuantite] = useState(1)
   const [avisForm, setAvisForm] = useState({ note: 5, titre: '', texte: '' })
   const [avisEnvoye, setAvisEnvoye] = useState(false)
+  const [avisError, setAvisError] = useState(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        const [produitRes, avisRes] = await Promise.all([
+          api.get(`/produits/${id}`),
+          api.get(`/produits/${id}/avis`)
+        ])
+        setProduit(produitRes.data)
+        setAvis(avisRes.data)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [id])
 
   const handleAvisChange = (e) => {
     setAvisForm({ ...avisForm, [e.target.name]: e.target.value })
   }
 
-  const handleAvisSubmit = (e) => {
+  const handleAvisSubmit = async (e) => {
     e.preventDefault()
-    console.log('Avis envoyé :', avisForm)
-    setAvisEnvoye(true)
+    setAvisError(null)
+    try {
+      await api.post(`/produits/${id}/avis`, {
+        note: avisForm.note,
+        titre: avisForm.titre,
+        contenu: avisForm.texte
+      })
+      setAvisEnvoye(true)
+    } catch (err) {
+      setAvisError(err.response?.data?.error || 'Une erreur est survenue')
+    }
+  }
+
+  if (loading) {
+    return <div className="product"><p style={{ textAlign: 'center', padding: '100px 0', color: 'var(--color-cream-dim)' }}>Chargement...</p></div>
+  }
+
+  if (!produit) {
+    return <div className="product"><p style={{ textAlign: 'center', padding: '100px 0', color: 'var(--color-cream-dim)' }}>Produit introuvable</p></div>
   }
 
   return (
@@ -42,23 +69,23 @@ function Product() {
 
             {/* Image */}
             <div className="product__image">
-              <img src={`/${produit.img}`} alt={produit.name} />
+              <img src={`/${produit.image_url}`} alt={produit.nom} />
             </div>
 
             {/* Infos */}
             <div className="product__info">
-              <p className="product__cat">{produit.cat}</p>
-              <h1>{produit.name}</h1>
-              <p className="product__price">{produit.price}</p>
+              <p className="product__cat">{produit.categorie_nom}</p>
+              <h1>{produit.nom}</h1>
+              <p className="product__price">{parseFloat(produit.prix).toFixed(2)} €</p>
               <p className="product__taxes">Taxes incluses. Frais d'expédition calculés lors de l'expédition.</p>
               <p className="product__desc">{produit.description}</p>
 
-              {/* Détails */}
-              <ul className="product__details">
-                {produit.details.map((d, i) => (
-                  <li key={i}><span>✦</span> {d}</li>
-                ))}
-              </ul>
+              {/* Stock */}
+              {produit.stock === 0 && (
+                <p style={{ color: 'var(--color-terracotta)', fontFamily: 'var(--font-heading)', fontSize: 'var(--text-sm)' }}>
+                  Rupture de stock
+                </p>
+              )}
 
               {/* Quantité + Ajout panier */}
               <div className="product__actions">
@@ -67,8 +94,8 @@ function Product() {
                   <span>{quantite}</span>
                   <button onClick={() => setQuantite(quantite + 1)}>+</button>
                 </div>
-                <button className="btn-accent product__add">
-                  Ajouter au panier
+                <button className="btn-accent product__add" disabled={produit.stock === 0}>
+                  {produit.stock === 0 ? 'Indisponible' : 'Ajouter au panier'}
                 </button>
               </div>
 
@@ -84,23 +111,34 @@ function Product() {
           <div className="ornament"><span>✦</span></div>
 
           {/* Liste avis */}
-          <div className="product__avis-grid">
-            {AVIS.map(avis => (
-              <div key={avis.id} className="murmure-card">
-                <div className="murmure-card__stars">{'★'.repeat(avis.note)}{'☆'.repeat(5 - avis.note)}</div>
-                <p className="product__avis-titre">{avis.titre}</p>
-                <p className="murmure-card__texte">"{avis.texte}"</p>
-                <div className="murmure-card__divider" />
-                <div className="murmure-card__author">
-                  <div className="murmure-card__avatar">{avis.nom.charAt(0)}</div>
-                  <div className="murmure-card__info">
-                    <span className="murmure-card__nom">{avis.nom}</span>
-                    <span className="murmure-card__produit">{avis.date}</span>
+          {avis.length === 0 ? (
+            <p style={{ textAlign: 'center', color: 'var(--color-cream-dim)', fontStyle: 'italic', marginBottom: 'var(--space-2xl)' }}>
+              Aucun avis pour le moment. Soyez la première à partager votre expérience !
+            </p>
+          ) : (
+            <div className="product__avis-grid">
+              {avis.map(item => (
+                <div key={item._id} className="murmure-card">
+                  <div className="murmure-card__stars">{'★'.repeat(item.note)}{'☆'.repeat(5 - item.note)}</div>
+                  <p className="product__avis-titre">{item.titre}</p>
+                  <p className="murmure-card__texte">"{item.contenu}"</p>
+                  {item.reponse_admin && (
+                    <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-terracotta)', fontStyle: 'italic', paddingTop: 'var(--space-sm)', borderTop: '1px solid var(--color-forest-light)' }}>
+                      ✦ Réponse de la boutique : {item.reponse_admin}
+                    </p>
+                  )}
+                  <div className="murmure-card__divider" />
+                  <div className="murmure-card__author">
+                    <div className="murmure-card__avatar">{item.utilisateur_prenom.charAt(0)}</div>
+                    <div className="murmure-card__info">
+                      <span className="murmure-card__nom">{item.utilisateur_prenom}</span>
+                      <span className="murmure-card__produit">{new Date(item.date).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           {/* Formulaire avis */}
           <div className="product__avis-form">
@@ -111,6 +149,11 @@ function Product() {
               </div>
             ) : (
               <form onSubmit={handleAvisSubmit}>
+                {avisError && (
+                  <p style={{ color: 'var(--color-terracotta)', fontSize: 'var(--text-sm)', marginBottom: 'var(--space-md)' }}>
+                    {avisError}
+                  </p>
+                )}
                 <div className="product__avis-note">
                   <label>Note</label>
                   <div className="product__stars-select">
@@ -130,13 +173,13 @@ function Product() {
                 </div>
                 <div className="auth__field">
                   <label htmlFor="texte">Votre avis</label>
-                  <textarea 
-                    id="texte" 
-                    name="texte" 
-                    value={avisForm.texte} 
-                    onChange={handleAvisChange} 
-                    placeholder="Partagez votre expérience..." 
-                    rows={4} 
+                  <textarea
+                    id="texte"
+                    name="texte"
+                    value={avisForm.texte}
+                    onChange={handleAvisChange}
+                    placeholder="Partagez votre expérience..."
+                    rows={4}
                     required
                     className="product__textarea"
                   />
