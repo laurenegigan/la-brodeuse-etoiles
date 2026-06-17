@@ -1,28 +1,85 @@
 import '../styles/Profile.css'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useAuth } from '../context/AuthContext'
+import api from '../api/axios'
 
 function Profile() {
+  const { user } = useAuth()
   const [activeTab, setActiveTab] = useState('commandes')
+  const [commandes, setCommandes] = useState([])
+  const [mailclub, setMailclub] = useState(null)
+  const [loadingCommandes, setLoadingCommandes] = useState(true)
+  const [loadingMailclub, setLoadingMailclub] = useState(true)
   const [showDesaboModal, setShowDesaboModal] = useState(false)
   const [desaboForm, setDesaboForm] = useState({ raison: '', commentaire: '' })
   const [desaboEnvoye, setDesaboEnvoye] = useState(false)
 
-  // Données fictives
-  const utilisateur = { prenom: 'Mathilde', email: 'mathilde@email.com' }
-  const commandes = [
-    { id: 1, date: '12 mars 2025', statut: 'Envoyé', total: '23,00 €', produits: ['La Forêt des Songes', 'Pack "Créatures des Bois"'] },
-    { id: 2, date: '28 janvier 2025', statut: 'Livré', total: '14,00 €', produits: ['Le Royaume Oublié'] },
-  ]
-  const mailclub = { statut: 'Actif', prochainEnvoi: '1er juillet 2025', prix: '9€ / mois' }
+  useEffect(() => {
+    const fetchCommandes = async () => {
+      try {
+        const response = await api.get('/commandes')
+        setCommandes(response.data)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoadingCommandes(false)
+      }
+    }
+    fetchCommandes()
+  }, [])
+
+  useEffect(() => {
+    const fetchMailclub = async () => {
+      try {
+        const response = await api.get('/mailclub')
+        setMailclub(response.data)
+      } catch (err) {
+        // 404 = pas d'abonnement, c'est normal
+        setMailclub(null)
+      } finally {
+        setLoadingMailclub(false)
+      }
+    }
+    fetchMailclub()
+  }, [])
+
+  const handlePause = async () => {
+    try {
+      await api.patch('/mailclub/pause')
+      setMailclub({ ...mailclub, statut: 'en_pause' })
+      alert('Abonnement mis en pause pour ce mois !')
+    } catch (err) {
+      alert(err.response?.data?.error || 'Une erreur est survenue')
+    }
+  }
 
   const handleDesaboChange = (e) => {
     setDesaboForm({ ...desaboForm, [e.target.name]: e.target.value })
   }
 
-  const handleDesaboSubmit = (e) => {
+  const handleDesaboSubmit = async (e) => {
     e.preventDefault()
-    console.log('Désabonnement :', desaboForm)
-    setDesaboEnvoye(true)
+    try {
+      await api.delete('/mailclub', { data: desaboForm })
+      setDesaboEnvoye(true)
+      setMailclub({ ...mailclub, statut: 'resilie' })
+    } catch (err) {
+      alert(err.response?.data?.error || 'Une erreur est survenue')
+    }
+  }
+
+  if (!user) {
+    return (
+      <div className="profile">
+        <section className="profile__section">
+          <div className="container">
+            <p style={{ textAlign: 'center', color: 'var(--color-cream-dim)' }}>
+              Vous devez être connectée pour accéder à votre espace.
+            </p>
+          </div>
+        </section>
+      </div>
+    )
   }
 
   return (
@@ -33,8 +90,8 @@ function Profile() {
         <div className="container">
           <p className="section-label">Mon espace</p>
           <div className="ornament"><span>✦</span></div>
-          <h1>Bonjour, {utilisateur.prenom} ✦</h1>
-          <p className="profile__email">{utilisateur.email}</p>
+          <h1>Bonjour, {user.prenom} ✦</h1>
+          <p className="profile__email">{user.email}</p>
         </div>
       </section>
 
@@ -59,7 +116,9 @@ function Profile() {
           {/* COMMANDES */}
           {activeTab === 'commandes' && (
             <div className="profile__commandes">
-              {commandes.length === 0 ? (
+              {loadingCommandes ? (
+                <p style={{ textAlign: 'center', color: 'var(--color-cream-dim)' }}>Chargement...</p>
+              ) : commandes.length === 0 ? (
                 <div className="profile__empty">
                   <p>Vous n'avez pas encore de commandes.</p>
                   <a href="/catalogue" className="btn-accent">Découvrir la boutique</a>
@@ -70,18 +129,20 @@ function Profile() {
                     <div className="profile__commande-header">
                       <div>
                         <span className="profile__commande-id">Commande #{cmd.id}</span>
-                        <span className="profile__commande-date">{cmd.date}</span>
+                        <span className="profile__commande-date">
+                          {new Date(cmd.date_commande).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                        </span>
                       </div>
                       <div className="profile__commande-right">
-                        <span className={`profile__statut profile__statut--${cmd.statut.toLowerCase()}`}>
-                          {cmd.statut}
+                        <span className={`profile__statut profile__statut--${cmd.statut === 'en_attente' ? 'en-attente' : cmd.statut === 'envoye' ? 'envoyé' : 'livré'}`}>
+                          {cmd.statut === 'en_attente' ? 'En attente' : cmd.statut === 'envoye' ? 'Envoyé' : 'Livré'}
                         </span>
-                        <span className="profile__commande-total">{cmd.total}</span>
+                        <span className="profile__commande-total">{parseFloat(cmd.total).toFixed(2)} €</span>
                       </div>
                     </div>
                     <ul className="profile__commande-produits">
                       {cmd.produits.map((p, i) => (
-                        <li key={i}><span>✦</span> {p}</li>
+                        <li key={i}><span>✦</span> {p.nom} (x{p.quantite})</li>
                       ))}
                     </ul>
                   </div>
@@ -93,7 +154,14 @@ function Profile() {
           {/* MAIL CLUB */}
           {activeTab === 'mailclub' && (
             <div className="profile__mailclub">
-              {!desaboEnvoye ? (
+              {loadingMailclub ? (
+                <p style={{ textAlign: 'center', color: 'var(--color-cream-dim)' }}>Chargement...</p>
+              ) : !mailclub ? (
+                <div className="profile__empty">
+                  <p>Vous n'êtes pas encore inscrite au Mail Club.</p>
+                  <a href="/mail-club" className="btn-accent">Rejoindre le Mail Club</a>
+                </div>
+              ) : !desaboEnvoye ? (
                 <>
                   <div className="profile__mailclub-card">
                     <div className="profile__mailclub-info">
@@ -101,28 +169,32 @@ function Profile() {
                       <div className="profile__mailclub-details">
                         <div className="profile__mailclub-detail">
                           <span className="profile__mailclub-label">Statut</span>
-                          <span className={`profile__statut profile__statut--${mailclub.statut.toLowerCase()}`}>
-                            {mailclub.statut}
+                          <span className={`profile__statut profile__statut--${mailclub.statut === 'actif' ? 'actif' : mailclub.statut === 'en_pause' ? 'en-pause' : 'résilié'}`}>
+                            {mailclub.statut === 'actif' ? 'Actif' : mailclub.statut === 'en_pause' ? 'En pause' : 'Résilié'}
                           </span>
                         </div>
                         <div className="profile__mailclub-detail">
-                          <span className="profile__mailclub-label">Prochain envoi</span>
-                          <span className="profile__mailclub-value">{mailclub.prochainEnvoi}</span>
+                          <span className="profile__mailclub-label">Inscrite depuis</span>
+                          <span className="profile__mailclub-value">
+                            {new Date(mailclub.date_inscription).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                          </span>
                         </div>
                         <div className="profile__mailclub-detail">
                           <span className="profile__mailclub-label">Tarif</span>
-                          <span className="profile__mailclub-value">{mailclub.prix}</span>
+                          <span className="profile__mailclub-value">9€ / mois</span>
                         </div>
                       </div>
                     </div>
-                    <div className="profile__mailclub-actions">
-                      <button className="btn-primary" onClick={() => alert('Abonnement mis en pause pour ce mois !')}>
-                        Mettre en pause
-                      </button>
-                      <button className="profile__desabo-btn" onClick={() => setShowDesaboModal(true)}>
-                        Se désabonner
-                      </button>
-                    </div>
+                    {mailclub.statut !== 'resilie' && (
+                      <div className="profile__mailclub-actions">
+                        <button className="btn-primary" onClick={handlePause}>
+                          Mettre en pause
+                        </button>
+                        <button className="profile__desabo-btn" onClick={() => setShowDesaboModal(true)}>
+                          Se désabonner
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                   {/* Modal désabonnement */}
