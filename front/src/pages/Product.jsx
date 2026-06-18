@@ -1,10 +1,13 @@
 import '../styles/Product.css'
 import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
 import api from '../api/axios'
+import { useCart } from '../context/CartContext'
+import { useParams, useNavigate } from 'react-router-dom'
 
 function Product() {
   const { id } = useParams()
+  const { addItem } = useCart()
+  const navigate = useNavigate()
   const [produit, setProduit] = useState(null)
   const [avis, setAvis] = useState([])
   const [loading, setLoading] = useState(true)
@@ -94,7 +97,14 @@ function Product() {
                   <span>{quantite}</span>
                   <button onClick={() => setQuantite(quantite + 1)}>+</button>
                 </div>
-                <button className="btn-accent product__add" disabled={produit.stock === 0}>
+                <button
+                  className="btn-accent product__add"
+                  disabled={produit.stock === 0}
+                  onClick={() => {
+                    addItem(produit, quantite)
+                    navigate('/paiement')
+                  }}
+                >
                   {produit.stock === 0 ? 'Indisponible' : 'Ajouter au panier'}
                 </button>
               </div>

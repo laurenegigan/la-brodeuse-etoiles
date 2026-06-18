@@ -1,29 +1,66 @@
 import '../styles/Payment.css'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useCart } from '../context/CartContext'
+import api from '../api/axios'
 
 function Payment() {
-  const [form, setForm] = useState({
-    prenom: '', nom: '', email: '', adresse: '', ville: '', codepostal: '', pays: 'France'
-  })
+  const { items, total, clearCart, removeItem } = useCart()
+  const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [success, setSuccess] = useState(false)
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
+  const handleCommande = async () => {
+    setError(null)
+    setLoading(true)
+    try {
+      await api.post('/commandes', {
+        items: items.map(i => ({ produit_id: i.id, quantite: i.quantite }))
+      })
+      clearCart()
+      setSuccess(true)
+    } catch (err) {
+      setError(err.response?.data?.error || 'Une erreur est survenue lors de la commande')
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log('Commande :', form)
+  if (success) {
+    return (
+      <div className="payment">
+        <section className="payment__section">
+          <div className="container">
+            <div className="payment__success">
+              <p className="section-label">Pré-commande confirmée</p>
+              <div className="ornament"><span>✦</span></div>
+              <h1>Merci ✦</h1>
+              <p>Votre pré-commande a bien été enregistrée. Vous pouvez suivre son statut dans votre espace personnel.</p>
+              <a href="/mon-espace" className="btn-accent">Voir mes commandes</a>
+            </div>
+          </div>
+        </section>
+      </div>
+    )
   }
 
-  // Panier fictif pour la maquette
-  const panier = [
-    { id: 1, name: 'La Forêt des Songes', price: 14.00, qty: 1, img: 'product-1.jpg' },
-    { id: 2, name: 'Carnet "Lune de Minuit"', price: 9.00, qty: 2, img: 'product-2.jpg' },
-  ]
-
-  const sousTotal = panier.reduce((acc, item) => acc + item.price * item.qty, 0)
-  const fraisPort = 4.50
-  const total = sousTotal + fraisPort
+  if (items.length === 0) {
+    return (
+      <div className="payment">
+        <section className="payment__section">
+          <div className="container">
+            <p style={{ textAlign: 'center', color: 'var(--color-cream-dim)' }}>
+              Votre panier est vide.
+            </p>
+            <div style={{ textAlign: 'center', marginTop: 'var(--space-lg)' }}>
+              <a href="/catalogue" className="btn-accent">Découvrir la boutique</a>
+            </div>
+          </div>
+        </section>
+      </div>
+    )
+  }
 
   return (
     <div className="payment">
@@ -31,8 +68,9 @@ function Payment() {
       {/* HERO */}
       <section className="payment__hero">
         <div className="container">
-          <h1>Paiement</h1>
+          <p className="section-label">Pré-commande</p>
           <div className="ornament"><span>✦</span></div>
+          <h1>Votre panier</h1>
         </div>
       </section>
 
@@ -41,89 +79,53 @@ function Payment() {
         <div className="container">
           <div className="payment__grid">
 
-            {/* Formulaire */}
-            <div className="payment__form-wrapper">
-              <h3>Informations de livraison</h3>
-              <form className="payment__form" onSubmit={handleSubmit}>
-                <div className="payment__row">
-                  <div className="auth__field">
-                    <label htmlFor="prenom">Prénom</label>
-                    <input type="text" id="prenom" name="prenom" value={form.prenom} onChange={handleChange} placeholder="Votre prénom" required />
+            {/* Liste produits */}
+            <div className="payment__items">
+              {items.map(item => (
+                <div key={item.id} className="payment__item">
+                  <img src={`/${item.image_url}`} alt={item.nom} className="payment__item-img" />
+                  <div className="payment__item-info">
+                    <h4>{item.nom}</h4>
+                    <p>Quantité : {item.quantite}</p>
                   </div>
-                  <div className="auth__field">
-                    <label htmlFor="nom">Nom</label>
-                    <input type="text" id="nom" name="nom" value={form.nom} onChange={handleChange} placeholder="Votre nom" required />
+                  <div className="payment__item-price">
+                    {(parseFloat(item.prix) * item.quantite).toFixed(2)} €
                   </div>
+                  <button className="payment__item-remove" onClick={() => removeItem(item.id)}>
+                    Retirer
+                  </button>
                 </div>
-                <div className="auth__field">
-                  <label htmlFor="email">Email</label>
-                  <input type="email" id="email" name="email" value={form.email} onChange={handleChange} placeholder="votre@email.com" required />
-                </div>
-                <div className="auth__field">
-                  <label htmlFor="adresse">Adresse</label>
-                  <input type="text" id="adresse" name="adresse" value={form.adresse} onChange={handleChange} placeholder="Votre adresse" required />
-                </div>
-                <div className="payment__row">
-                  <div className="auth__field">
-                    <label htmlFor="codepostal">Code postal</label>
-                    <input type="text" id="codepostal" name="codepostal" value={form.codepostal} onChange={handleChange} placeholder="75000" required />
-                  </div>
-                  <div className="auth__field">
-                    <label htmlFor="ville">Ville</label>
-                    <input type="text" id="ville" name="ville" value={form.ville} onChange={handleChange} placeholder="Paris" required />
-                  </div>
-                </div>
-                <div className="auth__field">
-                  <label htmlFor="pays">Pays</label>
-                  <select id="pays" name="pays" value={form.pays} onChange={handleChange}>
-                    <option value="France">France</option>
-                    <option value="Belgique">Belgique</option>
-                    <option value="Suisse">Suisse</option>
-                    <option value="Luxembourg">Luxembourg</option>
-                  </select>
-                </div>
-                <button type="submit" className="btn-accent payment__btn">
-                  Confirmer la commande
-                </button>
-                <p className="payment__legal">
-                  En confirmant votre commande, vous acceptez nos <a href="/cgv">CGV</a>.
-                </p>
-              </form>
+              ))}
             </div>
 
             {/* Récapitulatif */}
-            <div className="payment__recap">
+            <div className="payment__summary">
               <h3>Récapitulatif</h3>
-              <div className="payment__items">
-                {panier.map(item => (
-                  <div key={item.id} className="payment__item">
-                    <div className="payment__item-img">
-                      <img src={`/${item.img}`} alt={item.name} />
-                      <span className="payment__item-qty">{item.qty}</span>
-                    </div>
-                    <div className="payment__item-info">
-                      <p className="payment__item-name">{item.name}</p>
-                      <p className="payment__item-price">{(item.price * item.qty).toFixed(2)} €</p>
-                    </div>
-                  </div>
-                ))}
+              <div className="payment__summary-row">
+                <span>Sous-total</span>
+                <span>{total.toFixed(2)} €</span>
               </div>
-              <div className="payment__divider" />
-              <div className="payment__totals">
-                <div className="payment__total-line">
-                  <span>Sous-total</span>
-                  <span>{sousTotal.toFixed(2)} €</span>
-                </div>
-                <div className="payment__total-line">
-                  <span>Frais de port</span>
-                  <span>{fraisPort.toFixed(2)} €</span>
-                </div>
-                <div className="payment__divider" />
-                <div className="payment__total-line payment__total-line--final">
-                  <span>Total</span>
-                  <span>{total.toFixed(2)} €</span>
-                </div>
+              <div className="payment__summary-row">
+                <span>Frais d'expédition</span>
+                <span>Calculés ultérieurement</span>
               </div>
+              <div className="payment__summary-total">
+                <span>Total</span>
+                <span>{total.toFixed(2)} €</span>
+              </div>
+
+              {error && (
+                <p style={{ color: 'var(--color-terracotta)', fontSize: 'var(--text-sm)' }}>
+                  {error}
+                </p>
+              )}
+
+              <button className="btn-accent payment__submit" onClick={handleCommande} disabled={loading}>
+                {loading ? 'Validation...' : 'Valider la pré-commande'}
+              </button>
+              <p className="payment__note">
+                Ceci est une pré-commande sans paiement réel, conformément au concept de la boutique.
+              </p>
             </div>
 
           </div>
